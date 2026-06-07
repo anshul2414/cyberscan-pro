@@ -1,0 +1,17 @@
+services:
+  cyberscan:
+    build: .
+    image: cyberscan-pro:latest
+    container_name: cyberscan-pro
+    ports:
+      - "8080:5000"
+    environment:
+      - DB_PATH=/data/cyberscan.db
+      # ── Authentication ─────────────────────────────────────────────────────
+      # Change these before deploying!
+      - AUTH_USERNAME=admin
+      - AUTH_PASSWORD=admin123
+      - SECRET_KEY=change-this-to-a-random-secret-string
+    volumes:
+      - ./data:/data
+    restart: unless-stopped
