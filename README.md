@@ -225,7 +225,6 @@ Contributions, issues, and feature requests are welcome!
 - 💼 LinkedIn: [linkedin.com/in/anshul-9800a3275](https://linkedin.com/in/anshul-9800a3275)
 - 🐙 GitHub: [github.com/anshul2414](https://github.com/anshul2414)
 - 🎯 TryHackMe: [tryhackme.com/p/anshul28054](https://tryhackme.com/p/anshul28054)
-- 📱 Phone: +91-8091402414
 
 ---
 
