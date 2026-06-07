@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CyberScan Pro — All-in-One Cybersecurity Intelligence Platform</title>
+<meta name="description" content="30-module cybersecurity intelligence platform for penetration testers. Port scan, JWT analyzer, SSRF probe, XSS/SQLi scanner and more — self-hosted with Docker."/>
+<meta property="og:title" content="CyberScan Pro"/>
+<meta property="og:description" content="All-in-One Cybersecurity Intelligence Platform with 30 modules"/>
+<meta property="og:type" content="website"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#050810;--surface:#0d1117;--surface2:#161b22;--border:#21262d;
+  --accent:#00d4ff;--accent2:#0066ff;--orange:#f97316;
+  --success:#22c55e;--warning:#eab308;--danger:#ef4444;
+  --text:#e6edf3;--muted:#8b949e;--dim:#484f58;
+  --font:'Inter',-apple-system,sans-serif;--mono:'JetBrains Mono',monospace;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
+
+/* BG grid */
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:linear-gradient(rgba(0,212,255,.03) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(0,212,255,.03) 1px,transparent 1px);
+  background-size:50px 50px;pointer-events:none;z-index:0;
+}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  backdrop-filter:blur(20px);background:rgba(5,8,16,.8);
+  border-bottom:1px solid var(--border);
+  padding:0 max(24px,5vw);height:60px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text)}
+.nav-logo-icon{
+  width:32px;height:32px;border-radius:8px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;font-size:16px;
+}
+.nav-logo-text{font-weight:700;font-size:15px;letter-spacing:.3px}
+.nav-links{display:flex;align-items:center;gap:8px}
+.nav-links a{
+  color:var(--muted);text-decoration:none;font-size:13px;font-weight:500;
+  padding:6px 14px;border-radius:6px;transition:all .2s;
+}
+.nav-links a:hover{color:var(--text);background:var(--surface2)}
+.btn-primary{
+  background:linear-gradient(135deg,var(--accent),var(--accent2))!important;
+  color:#fff!important;font-weight:600!important;
+  box-shadow:0 0 20px rgba(0,212,255,.2);
+}
+.btn-primary:hover{box-shadow:0 0 28px rgba(0,212,255,.4)!important;opacity:.95}
+
+/* HERO */
+.hero{
+  position:relative;z-index:1;
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;
+  padding:100px max(24px,5vw) 60px;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);
+  border-radius:20px;padding:6px 16px;font-size:12px;font-weight:600;
+  color:var(--accent);letter-spacing:.5px;text-transform:uppercase;margin-bottom:24px;
+}
+.hero-badge span{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+h1{
+  font-size:clamp(2.4rem,6vw,4.5rem);font-weight:800;line-height:1.1;
+  letter-spacing:-1.5px;margin-bottom:20px;
+}
+h1 span{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-sub{font-size:clamp(1rem,2vw,1.2rem);color:var(--muted);max-width:620px;margin:0 auto 36px}
+.hero-ctas{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:60px}
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:12px 24px;border-radius:8px;font-size:14px;font-weight:600;
+  text-decoration:none;transition:all .2s;cursor:pointer;border:none;
+}
+.btn-grad{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;box-shadow:0 0 30px rgba(0,212,255,.25);
+}
+.btn-grad:hover{box-shadow:0 0 40px rgba(0,212,255,.45);transform:translateY(-1px)}
+.btn-outline{
+  background:transparent;color:var(--text);
+  border:1px solid var(--border);
+}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent);background:rgba(0,212,255,.06)}
+
+/* STATS */
+.stats{display:flex;gap:40px;flex-wrap:wrap;justify-content:center;margin-bottom:60px}
+.stat{text-align:center}
+.stat-num{font-size:2rem;font-weight:800;color:var(--accent)}
+.stat-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+
+/* TERMINAL PREVIEW */
+.terminal{
+  width:min(680px,90vw);background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;overflow:hidden;text-align:left;
+  box-shadow:0 20px 60px rgba(0,0,0,.5),0 0 40px rgba(0,212,255,.05);
+}
+.term-bar{
+  background:var(--surface2);padding:10px 16px;
+  display:flex;align-items:center;gap:8px;
+  border-bottom:1px solid var(--border);
+}
+.dot{width:12px;height:12px;border-radius:50%}
+.dot-r{background:#ef4444}.dot-y{background:#eab308}.dot-g{background:#22c55e}
+.term-title{margin-left:auto;margin-right:auto;font-size:12px;color:var(--dim);font-family:var(--mono)}
+.term-body{padding:20px;font-family:var(--mono);font-size:13px;line-height:1.8}
+.term-line{display:block}
+.c-prompt{color:var(--accent)}
+.c-cmd{color:var(--text)}
+.c-green{color:#22c55e}
+.c-yellow{color:#eab308}
+.c-blue{color:#60a5fa}
+.c-orange{color:var(--orange)}
+.c-dim{color:var(--dim)}
+
+/* SECTIONS */
+section{position:relative;z-index:1;padding:80px max(24px,5vw)}
+.section-label{font-size:12px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px}
+.section-title{font-size:clamp(1.6rem,3vw,2.4rem);font-weight:800;margin-bottom:12px;letter-spacing:-.5px}
+.section-sub{color:var(--muted);max-width:540px;margin-bottom:48px}
+
+/* MODULES GRID */
+.modules-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  gap:16px;
+}
+.module-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;padding:20px;
+  transition:border-color .2s,transform .2s,box-shadow .2s;
+}
+.module-card:hover{border-color:rgba(0,212,255,.3);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,212,255,.08)}
+.module-icon{font-size:1.5rem;margin-bottom:10px}
+.module-name{font-weight:600;font-size:14px;margin-bottom:4px}
+.module-desc{font-size:12px;color:var(--muted)}
+.module-tag{
+  display:inline-block;margin-top:10px;
+  padding:2px 10px;border-radius:4px;font-size:11px;font-weight:600;
+}
+.tag-core{background:rgba(0,212,255,.1);color:var(--accent)}
+.tag-advanced{background:rgba(239,68,68,.1);color:#f87171}
+
+/* FEATURES */
+.features-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px}
+.feature{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;padding:24px;
+}
+.feature-icon{
+  width:44px;height:44px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;margin-bottom:16px;
+}
+.fi-blue{background:rgba(0,212,255,.1)}
+.fi-orange{background:rgba(249,115,22,.1)}
+.fi-green{background:rgba(34,197,94,.1)}
+.fi-purple{background:rgba(168,85,247,.1)}
+.feature h3{font-size:15px;font-weight:600;margin-bottom:6px}
+.feature p{font-size:13px;color:var(--muted)}
+
+/* INSTALL */
+.install-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.tab{
+  padding:8px 18px;border-radius:6px;font-size:13px;font-weight:500;
+  background:var(--surface2);border:1px solid var(--border);color:var(--muted);
+  cursor:pointer;transition:all .2s;
+}
+.tab.active{background:rgba(0,212,255,.1);border-color:rgba(0,212,255,.3);color:var(--accent)}
+.code-block{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;padding:24px;overflow-x:auto;
+}
+.code-block pre{font-family:var(--mono);font-size:13px;line-height:1.8;color:var(--text)}
+.code-block .comment{color:var(--dim)}
+.code-block .cmd{color:var(--accent)}
+.code-block .str{color:#22c55e}
+.code-block .key{color:var(--orange)}
+
+/* FOOTER */
+footer{
+  position:relative;z-index:1;
+  border-top:1px solid var(--border);
+  padding:40px max(24px,5vw);
+  display:flex;flex-wrap:wrap;gap:24px;
+  align-items:center;justify-content:space-between;
+}
+.footer-left{display:flex;align-items:center;gap:12px}
+.footer-links{display:flex;gap:16px;flex-wrap:wrap}
+.footer-links a{color:var(--muted);text-decoration:none;font-size:13px;transition:color .2s}
+.footer-links a:hover{color:var(--text)}
+.footer-copy{font-size:12px;color:var(--dim)}
+
+@media(max-width:600px){
+  .nav-links a:not(.btn-primary){display:none}
+  .stats{gap:24px}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">
+    <div class="nav-logo-icon">🛡️</div>
+    <span class="nav-logo-text">CyberScan Pro</span>
+  </a>
+  <div class="nav-links">
+    <a href="#modules">Modules</a>
+    <a href="#install">Install</a>
+    <a href="https://github.com/anshul2414/cyberscan-pro" target="_blank">GitHub</a>
+    <a href="https://github.com/anshul2414/cyberscan-pro" target="_blank" class="btn-primary">⭐ Star</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">
+    <span></span> v2.0 · 30 Security Modules · Self-Hosted
+  </div>
+  <h1>All-in-One<br/><span>Cybersecurity</span><br/>Intelligence Platform</h1>
+  <p class="hero-sub">
+    30 offensive &amp; defensive modules in a single authenticated dashboard.
+    Built for penetration testers, ethical hackers, and security researchers.
+  </p>
+  <div class="hero-ctas">
+    <a class="btn btn-grad" href="https://github.com/anshul2414/cyberscan-pro">
+      🐙 View on GitHub
+    </a>
+    <a class="btn btn-outline" href="#install">
+      🚀 Quick Start
+    </a>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-num">30</div><div class="stat-label">Modules</div></div>
+    <div class="stat"><div class="stat-num">16</div><div class="stat-label">Recon Tools</div></div>
+    <div class="stat"><div class="stat-num">14</div><div class="stat-label">Offensive Tools</div></div>
+    <div class="stat"><div class="stat-num">1</div><div class="stat-label">Dashboard</div></div>
+  </div>
+
+  <!-- Terminal preview -->
+  <div class="terminal">
+    <div class="term-bar">
+      <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+      <span class="term-title">cyberscan-pro — terminal</span>
+    </div>
+    <div class="term-body">
+      <span class="term-line"><span class="c-prompt">$</span> <span class="c-cmd">git clone https://github.com/anshul2414/cyberscan-pro.git</span></span>
+      <span class="term-line"><span class="c-green">✔ Cloning into 'cyberscan-pro'...</span></span>
+      <span class="term-line"><span class="c-prompt">$</span> <span class="c-cmd">cd cyberscan-pro &amp;&amp; pip install -r requirements.txt</span></span>
+      <span class="term-line"><span class="c-yellow">→ Installing flask, gunicorn, dnspython, python-whois...</span></span>
+      <span class="term-line"><span class="c-prompt">$</span> <span class="c-cmd">python app.py</span></span>
+      <span class="term-line"><span class="c-blue">✦ CyberScan Pro v2.0 — 30 modules loaded</span></span>
+      <span class="term-line"><span class="c-green">✔ Running on http://localhost:5000</span></span>
+      <span class="term-line"><span class="c-dim"># Login: admin / admin123 (change before deploying!)</span></span>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features" style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+  <div style="max-width:1100px;margin:0 auto">
+    <div class="section-label">Why CyberScan Pro?</div>
+    <div class="section-title">Everything in one place</div>
+    <p class="section-sub">Stop juggling 20 different CLI tools. CyberScan Pro unifies your security toolkit.</p>
+    <div class="features-grid">
+      <div class="feature">
+        <div class="feature-icon fi-blue">🛡️</div>
+        <h3>30 Integrated Modules</h3>
+        <p>From basic DNS lookups to advanced SSRF probing and JWT exploitation — all in one authenticated web UI.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon fi-orange">🔐</div>
+        <h3>Authenticated Dashboard</h3>
+        <p>Session-based login protects your scanning history and prevents unauthorized access to sensitive results.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon fi-green">🐳</div>
+        <h3>Docker Ready</h3>
+        <p>One command deploy with Docker Compose. Configure credentials via environment variables. No fuss.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon fi-purple">📊</div>
+        <h3>Scan History</h3>
+        <p>All scans are persisted in a local SQLite database. Review, export, and track your assessment history.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon fi-blue">⚡</div>
+        <h3>No Cloud SaaS</h3>
+        <p>100% self-hosted. Your data never leaves your machine. No API keys, no rate limits, no subscriptions.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon fi-orange">🎯</div>
+        <h3>Built for Pentesters</h3>
+        <p>Designed by a practicing ethical hacker. Modules map directly to real-world assessment workflows.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MODULES -->
+<section id="modules">
+  <div style="max-width:1100px;margin:0 auto">
+    <div class="section-label">Security Modules</div>
+    <div class="section-title">30 Modules. One Platform.</div>
+    <p class="section-sub">16 core reconnaissance tools + 14 advanced offensive modules.</p>
+    <div class="modules-grid">
+      <div class="module-card"><div class="module-icon">🔗</div><div class="module-name">URL Check</div><div class="module-desc">Analyze URL safety, redirects &amp; response metadata</div><span class="module-tag tag-core">Core</span></div>
+      <div class="module-card"><div class="module-icon">🔌</div><div class="module-name">Port Scanner</div><div class="module-desc">TCP port scanning with service detection</div><span class="module-tag tag-core">Core</span></div>
+      <div class="module-card"><div class="module-icon">🌐</div><div class="module-name">DNS Lookup</div><div class="module-desc">Full DNS enumeration — A, MX, NS, TXT, AAAA records</div><span class="module-tag tag-core">Core</span></div>
+      <div class="module-card"><div class="module-icon">🔒</div><div class="module-name">SSL Inspector</div><div class="module-desc">Certificate chain, expiry, cipher suite analysis</div><span class="module-tag tag-core">Core</span></div>
+      <div class="module-card"><div class="module-icon">📋</div><div class="module-name">WHOIS Lookup</div><div class="module-desc">Domain registration &amp; ownership data</div><span class="module-tag tag-core">Core</span></div>
+      <div class="module-card"><div class="module-icon">🧰</div><div class="module-name">Tech Detect</div><div class="module-desc">Identify web technologies, frameworks &amp; CMS</div><span class="module-tag tag-core">Core</span></div>
+      <div class="module-card"><div class="module-icon">📧</div><div class="module-name">Email Security</div><div class="module-desc">SPF, DKIM, DMARC validation &amp; analysis</div><span class="module-tag tag-core">Core</span></div>
+      <div class="module-card"><div class="module-icon">📌</div><div class="module-name">Security Headers</div><div class="module-desc">HTTP security header audit — HSTS, CSP, X-Frame-Options</div><span class="module-tag tag-core">Core</span></div>
+      <div class="module-card"><div class="module-icon">🌀</div><div class="module-name">CORS Analyzer</div><div class="module-desc">Cross-Origin Resource Sharing misconfiguration check</div><span class="module-tag tag-core">Core</span></div>
+      <div class="module-card"><div class="module-icon">🧱</div><div class="module-name">WAF Detect</div><div class="module-desc">Web Application Firewall fingerprinting</div><span class="module-tag tag-core">Core</span></div>
+      <div class="module-card"><div class="module-icon">🌿</div><div class="module-name">Subdomain Enum</div><div class="module-desc">Passive subdomain discovery &amp; enumeration</div><span class="module-tag tag-core">Core</span></div>
+      <div class="module-card"><div class="module-icon">📍</div><div class="module-name">IP Geolocation</div><div class="module-desc">ASN, ISP, geo &amp; threat classification</div><span class="module-tag tag-core">Core</span></div>
+      <div class="module-card"><div class="module-icon">#️⃣</div><div class="module-name">Hash Tools</div><div class="module-desc">MD5, SHA-1, SHA-256/512 generation &amp; comparison</div><span class="module-tag tag-core">Core</span></div>
+      <div class="module-card"><div class="module-icon">🔑</div><div class="module-name">Password Analyzer</div><div class="module-desc">Strength scoring, entropy &amp; breach pattern detection</div><span class="module-tag tag-core">Core</span></div>
+      <div class="module-card"><div class="module-icon">🤖</div><div class="module-name">Robots.txt Parser</div><div class="module-desc">Hidden paths and disallowed resource discovery</div><span class="module-tag tag-core">Core</span></div>
+      <div class="module-card"><div class="module-icon">🐞</div><div class="module-name">CVE Search</div><div class="module-desc">Search CVE database for vulnerability intelligence</div><span class="module-tag tag-core">Core</span></div>
+      <div class="module-card"><div class="module-icon">🛤️</div><div class="module-name">Traceroute</div><div class="module-desc">Network path tracing &amp; hop latency analysis</div><span class="module-tag tag-advanced">Advanced</span></div>
+      <div class="module-card"><div class="module-icon">📂</div><div class="module-name">Dir Fuzzer</div><div class="module-desc">Directory &amp; endpoint brute-force enumeration</div><span class="module-tag tag-advanced">Advanced</span></div>
+      <div class="module-card"><div class="module-icon">💉</div><div class="module-name">XSS / SQLi / LFI Scanner</div><div class="module-desc">Automated injection vulnerability scanner</div><span class="module-tag tag-advanced">Advanced</span></div>
+      <div class="module-card"><div class="module-icon">↪️</div><div class="module-name">Open Redirect</div><div class="module-desc">Open redirect chain detection &amp; verification</div><span class="module-tag tag-advanced">Advanced</span></div>
+      <div class="module-card"><div class="module-icon">🍪</div><div class="module-name">Cookie Analyzer</div><div class="module-desc">HttpOnly, Secure, SameSite attribute audit</div><span class="module-tag tag-advanced">Advanced</span></div>
+      <div class="module-card"><div class="module-icon">🎟️</div><div class="module-name">JWT Analyzer</div><div class="module-desc">Decode, audit &amp; fuzz JWT tokens for algorithm flaws</div><span class="module-tag tag-advanced">Advanced</span></div>
+      <div class="module-card"><div class="module-icon">🔐</div><div class="module-name">TLS Deep Scan</div><div class="module-desc">TLS version, cipher strength &amp; certificate pinning</div><span class="module-tag tag-advanced">Advanced</span></div>
+      <div class="module-card"><div class="module-icon">🔥</div><div class="module-name">Firewall Detect</div><div class="module-desc">Active firewall &amp; IDS/IPS detection techniques</div><span class="module-tag tag-advanced">Advanced</span></div>
+      <div class="module-card"><div class="module-icon">🔍</div><div class="module-name">Email Header Forensics</div><div class="module-desc">Full email header trace &amp; spoofing analysis</div><span class="module-tag tag-advanced">Advanced</span></div>
+      <div class="module-card"><div class="module-icon">🌐</div><div class="module-name">CIDR Scanner</div><div class="module-desc">Bulk IP range scanning &amp; host discovery</div><span class="module-tag tag-advanced">Advanced</span></div>
+      <div class="module-card"><div class="module-icon">🏷️</div><div class="module-name">Banner Grabber</div><div class="module-desc">Service banner collection for fingerprinting</div><span class="module-tag tag-advanced">Advanced</span></div>
+      <div class="module-card"><div class="module-icon">🔌</div><div class="module-name">API Security Tester</div><div class="module-desc">REST/GraphQL endpoint enumeration &amp; auth testing</div><span class="module-tag tag-advanced">Advanced</span></div>
+      <div class="module-card"><div class="module-icon">🧬</div><div class="module-name">Network Fingerprinter</div><div class="module-desc">OS &amp; service stack fingerprinting</div><span class="module-tag tag-advanced">Advanced</span></div>
+      <div class="module-card"><div class="module-icon">☁️</div><div class="module-name">SSRF / Cloud Probe</div><div class="module-desc">SSRF detection &amp; cloud metadata exposure testing</div><span class="module-tag tag-advanced">Advanced</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- INSTALL -->
+<section id="install" style="background:var(--surface);border-top:1px solid var(--border)">
+  <div style="max-width:900px;margin:0 auto">
+    <div class="section-label">Quick Start</div>
+    <div class="section-title">Up in 60 seconds</div>
+    <p class="section-sub">Three ways to run CyberScan Pro.</p>
+
+    <div class="install-tabs">
+      <div class="tab active" onclick="showTab('python',this)">🐍 Python</div>
+      <div class="tab" onclick="showTab('docker',this)">🐳 Docker</div>
+      <div class="tab" onclick="showTab('windows',this)">🪟 Windows</div>
+    </div>
+
+    <div id="tab-python" class="code-block">
+<pre><span class="comment"># Clone the repository</span>
+<span class="cmd">git clone https://github.com/anshul2414/cyberscan-pro.git</span>
+<span class="cmd">cd cyberscan-pro</span>
+
+<span class="comment"># Install dependencies</span>
+<span class="cmd">pip install -r requirements.txt</span>
+
+<span class="comment"># Launch</span>
+<span class="cmd">python app.py</span>
+
+<span class="comment"># Open → http://localhost:5000</span>
+<span class="comment"># Login → admin / admin123</span></pre>
+    </div>
+
+    <div id="tab-docker" class="code-block" style="display:none">
+<pre><span class="comment"># Clone &amp; deploy with Docker Compose</span>
+<span class="cmd">git clone https://github.com/anshul2414/cyberscan-pro.git</span>
+<span class="cmd">cd cyberscan-pro</span>
+
+<span class="comment"># Edit docker-compose.yml to set your credentials</span>
+<span class="comment"># AUTH_USERNAME, AUTH_PASSWORD, SECRET_KEY</span>
+
+<span class="cmd">docker-compose up -d</span>
+
+<span class="comment"># Open → http://localhost:8080</span></pre>
+    </div>
+
+    <div id="tab-windows" class="code-block" style="display:none">
+<pre><span class="comment"># Clone the repository</span>
+<span class="cmd">git clone https://github.com/anshul2414/cyberscan-pro.git</span>
+<span class="cmd">cd cyberscan-pro</span>
+
+<span class="comment"># Double-click or run:</span>
+<span class="cmd">run.bat</span>
+
+<span class="comment"># Open → http://localhost:5000</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <div class="nav-logo-icon" style="width:28px;height:28px;font-size:14px;border-radius:6px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center">🛡️</div>
+    <span style="font-weight:600;font-size:14px">CyberScan Pro</span>
+    <span class="footer-copy">v2.0 · MIT License</span>
+  </div>
+  <div class="footer-links">
+    <a href="https://github.com/anshul2414/cyberscan-pro" target="_blank">GitHub</a>
+    <a href="https://linkedin.com/in/anshul-9800a3275" target="_blank">LinkedIn</a>
+    <a href="https://tryhackme.com/p/anshul28054" target="_blank">TryHackMe</a>
+    <a href="https://github.com/anshul2414/cyberscan-pro/blob/main/LICENSE" target="_blank">License</a>
+  </div>
+  <p class="footer-copy">Built by <a href="https://github.com/anshul2414" style="color:var(--accent);text-decoration:none">Anshul</a> · For authorized use only</p>
+</footer>
+
+<script>
+function showTab(id, el) {
+  ['python','docker','windows'].forEach(t => {
+    document.getElementById('tab-'+t).style.display = t===id ? 'block' : 'none';
+  });
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+</script>
+</body>
+</html>
